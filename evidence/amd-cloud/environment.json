@@ -1,0 +1,22 @@
+{
+  "platform": "Linux-6.8.0-84-generic-x86_64-with-glibc2.35",
+  "python": "3.10.12",
+  "rocm_smi": {
+    "available": true,
+    "command": [
+      "rocm-smi"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "============================================ ROCm System Management Interface ============================================\n====================================================== Concise Info ======================================================\nDevice  Node  IDs              Temp        Power     Partitions          SCLK    MCLK    Fan  Perf  PwrCap  VRAM%  GPU%  \n\u001b[3m              (DID,     GUID)  (Junction)  (Socket)  (Mem, Compute, ID)                                                  \u001b[0m\n==========================================================================================================================\n0       1     0x74b5,   21947  46.0\u00b0C      145.0W    NPS1, SPX, 0        145Mhz  900Mhz  0%   auto  750.0W  0%     0%    \n==========================================================================================================================\n================================================== End of ROCm SMI Log ==================================================="
+  },
+  "torch": {
+    "cuda_api_available": true,
+    "device_count": 1,
+    "devices": [
+      ""
+    ],
+    "hip_version": "7.0.51831-a3e329ad8",
+    "version": "2.9.0.dev20250821+rocm7.0.0.git125803b7"
+  }
+}

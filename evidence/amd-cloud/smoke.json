@@ -1,0 +1,10 @@
+{
+  "device": "cuda",
+  "device_count": 1,
+  "device_name": "",
+  "elapsed_ms": 502.992,
+  "result_checksum": -5665.3887,
+  "status": "ok",
+  "torch_hip_version": "7.0.51831-a3e329ad8",
+  "torch_version": "2.9.0.dev20250821+rocm7.0.0.git125803b7"
+}

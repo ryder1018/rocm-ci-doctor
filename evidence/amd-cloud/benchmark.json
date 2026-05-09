@@ -1,0 +1,15 @@
+{
+  "benchmark": "matrix_multiply",
+  "device": "cuda",
+  "device_name": "",
+  "iterations": 10,
+  "matrix_size": 2048,
+  "max_ms": 0.26,
+  "mean_ms": 0.196,
+  "median_ms": 0.19,
+  "min_ms": 0.183,
+  "result_checksum": -135293.5312,
+  "status": "ok",
+  "torch_hip_version": "7.0.51831-a3e329ad8",
+  "torch_version": "2.9.0.dev20250821+rocm7.0.0.git125803b7"
+}
