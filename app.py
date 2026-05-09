@@ -678,7 +678,8 @@ def _render_html(markup: str) -> None:
 
 
 def _dedent_html(markup: str) -> str:
-    return textwrap.dedent(markup).strip()
+    normalized = textwrap.dedent(markup).strip()
+    return "\n".join(line.lstrip() for line in normalized.splitlines())
 
 
 def _inject_css() -> None:
