@@ -157,6 +157,7 @@ def _build_score_checks(analysis: dict[str, Any]) -> list[dict[str, Any]]:
     risk_ids = {risk.get("id") for risk in analysis.get("risks", [])}
 
     has_pytorch = bool(stack.get("pytorch"))
+    has_rocm_native = bool(stack.get("rocm_native"))
     has_cuda_runtime_assumptions = bool(
         {"pattern:cuda_method", "pattern:hardcoded_cuda_device"} & risk_ids
     )
@@ -168,17 +169,26 @@ def _build_score_checks(analysis: dict[str, Any]) -> list[dict[str, Any]]:
     has_entrypoint = bool(files.get("entrypoint_files"))
     has_readme = bool(files.get("readme_files"))
 
+    if has_rocm_native:
+        portable_awarded = 20
+        portable_rationale = "ROCm-native codebase detected (HIP source files or hipcc/find_package(HIP) in build system)."
+    elif has_pytorch and not has_cuda_runtime_assumptions:
+        portable_awarded = 20
+        portable_rationale = "PyTorch code is present without direct CUDA transfer assumptions."
+    elif not has_pytorch:
+        portable_awarded = 10
+        portable_rationale = "No PyTorch or ROCm-native workload was detected; AMD GPU readiness is less relevant."
+    else:
+        portable_awarded = 0
+        portable_rationale = "Direct CUDA device assumptions were detected in PyTorch code."
+
     checks = [
         _score_check(
-            "portable_pytorch_usage",
-            "Portable PyTorch usage",
+            "portable_gpu_codebase",
+            "Portable GPU codebase",
             20,
-            20 if has_pytorch and not has_cuda_runtime_assumptions else 10 if not has_pytorch else 0,
-            "PyTorch code is present without direct CUDA transfer assumptions."
-            if has_pytorch and not has_cuda_runtime_assumptions
-            else "No PyTorch workload was detected; AMD GPU readiness is less relevant."
-            if not has_pytorch
-            else "Direct CUDA device assumptions were detected in PyTorch code.",
+            portable_awarded,
+            portable_rationale,
         ),
         _score_check(
             "cuda_neutral_dependencies",

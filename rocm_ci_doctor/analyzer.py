@@ -168,7 +168,9 @@ def analyze_repository(root: Path, source: str | None = None, loaded_from: str =
 
     occurrences = _find_gpu_pattern_occurrences(root, readable_files)
     detected_stack = _detect_stack(root, files, all_dependencies)
-    ci_gaps = _detect_ci_gaps(root, files, workflow_files, dockerfiles, detected_stack)
+    ci_gaps = _detect_ci_gaps(
+        root, files, workflow_files, dockerfiles, detected_stack, occurrences
+    )
     risks = _build_risks(occurrences, ci_gaps)
     recommended_assets = _recommend_assets(detected_stack, ci_gaps, occurrences)
 
@@ -447,7 +449,38 @@ def _detect_stack(root: Path, files: list[Path], dependencies: list[str]) -> dic
         "docker": bool(dockerfiles),
         "github_actions": bool(workflow_files),
         "tests": _has_tests(root, files),
+        "rocm_native": _detect_rocm_native(files),
     }
+
+
+def _detect_rocm_native(files: list[Path]) -> bool:
+    """Detect a ROCm-native (HIP/C++) codebase.
+
+    Strong signals only — `.hip` source files or build files (Makefile,
+    CMakeLists.txt, *.cmake) referencing `hipcc` / `find_package(HIP)` /
+    `<hip/hip_runtime.h>`. README mentions alone are too weak and would
+    misclassify Python repos that happen to discuss ROCm in docs.
+    """
+    for file in files:
+        if file.suffix.lower() == ".hip":
+            return True
+
+    build_filenames = {"makefile", "gnumakefile", "cmakelists.txt"}
+    for file in files:
+        name_lower = file.name.lower()
+        is_build = name_lower in build_filenames or file.suffix.lower() == ".cmake"
+        if not is_build:
+            continue
+        try:
+            if file.stat().st_size > MAX_FILE_BYTES:
+                continue
+        except OSError:
+            continue
+        text = _read_text(file).lower()
+        if "hipcc" in text or "find_package(hip" in text or "hip_runtime" in text:
+            return True
+
+    return False
 
 
 def _has_import(code_text: str, module: str) -> bool:
@@ -470,8 +503,17 @@ def _detect_ci_gaps(
     workflow_files: list[Path],
     dockerfiles: list[Path],
     detected_stack: dict[str, bool],
+    occurrences: list[dict[str, Any]],
 ) -> list[dict[str, str]]:
     gaps: list[dict[str, str]] = []
+    gpu_relevant = (
+        bool(detected_stack.get("pytorch"))
+        or bool(detected_stack.get("vllm"))
+        or bool(detected_stack.get("sglang"))
+        or bool(detected_stack.get("rocm_native"))
+        or bool(occurrences)
+    )
+
     if not workflow_files:
         gaps.append(
             {
@@ -480,7 +522,7 @@ def _detect_ci_gaps(
                 "message": "No GitHub Actions workflows were detected.",
             }
         )
-    elif not _workflow_mentions_rocm(workflow_files):
+    elif gpu_relevant and not _workflow_mentions_rocm(workflow_files):
         gaps.append(
             {
                 "id": "missing_rocm_workflow",
