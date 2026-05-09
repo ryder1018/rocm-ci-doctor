@@ -1,3 +1,14 @@
+---
+title: ROCm CI Doctor
+colorFrom: red
+colorTo: gray
+sdk: streamlit
+sdk_version: 1.45.0
+app_file: app.py
+pinned: false
+license: mit
+---
+
 # ROCm CI Doctor
 
 ROCm CI Doctor is an agentic developer workflow for keeping AI repositories AMD/ROCm-ready. It analyzes a Python/PyTorch repository, scores ROCm CI readiness, generates a reviewable validation bundle, and uses Qwen to help maintainers understand what to fix first.
@@ -196,8 +207,7 @@ export DASHSCOPE_API_KEY="sk-..."
 Or create a local `.env` file. `.env` is ignored by git:
 
 ```bash
-cp .env.example .env
-# edit .env and replace sk-your-qwen-api-key with your real key
+printf 'DASHSCOPE_API_KEY=sk-your-qwen-api-key\nQWEN_MODEL=qwen-plus\n' > .env
 ```
 
 You can also enter the key into the Streamlit sidebar for the current local session. The default model is `qwen-plus`; override it with:

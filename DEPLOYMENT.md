@@ -37,7 +37,6 @@ rg -n "sk-|DASHSCOPE_API_KEY|API_KEY|TOKEN|SECRET|PASSWORD" . \
 Expected:
 
 - `.env` is ignored.
-- `.env.example` contains only placeholder values.
 - Real API keys do not appear in tracked files.
 
 ## GitHub Repository

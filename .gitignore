@@ -18,4 +18,3 @@ outputs/
 .rocm-ci-doctor/
 .env
 .env.*
-!.env.example
