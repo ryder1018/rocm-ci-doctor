@@ -57,7 +57,7 @@ def main() -> None:
         value=default_bundle_dir(source).as_posix(),
     )
 
-    analyze_clicked = st.sidebar.button("Run Analysis", type="primary", width="stretch")
+    analyze_clicked = st.sidebar.button("Run Analysis", type="primary", use_container_width=True)
 
     if analyze_clicked:
         _run_analysis(source, Path(output_dir))
@@ -236,15 +236,15 @@ def _render_results(state: dict[str, Any]) -> None:
         col_a, col_b = st.columns([1, 1])
         with col_a:
             st.subheader("Detected Stack")
-            st.dataframe(stack_rows(analysis), width="stretch", hide_index=True)
+            st.dataframe(stack_rows(analysis), use_container_width=True, hide_index=True)
         with col_b:
             st.subheader("Score Breakdown")
-            st.dataframe(assessment["checks"], width="stretch", hide_index=True)
+            st.dataframe(assessment["checks"], use_container_width=True, hide_index=True)
 
         st.subheader("CI Gaps")
         ci_gaps = analysis.get("ci_gaps", [])
         if ci_gaps:
-            st.dataframe(ci_gaps, width="stretch", hide_index=True)
+            st.dataframe(ci_gaps, use_container_width=True, hide_index=True)
         else:
             st.success("No CI gaps detected by static analysis.")
 
@@ -253,7 +253,7 @@ def _render_results(state: dict[str, Any]) -> None:
         rows = risk_rows(analysis)
         if rows:
             st.subheader("Risk Table")
-            st.dataframe(rows, width="stretch", hide_index=True)
+            st.dataframe(rows, use_container_width=True, hide_index=True)
         else:
             st.success("No risks detected by static analysis.")
 
@@ -272,7 +272,7 @@ def _render_results(state: dict[str, Any]) -> None:
                 data=report_text,
                 file_name="ROCM_CI_REPORT.md",
                 mime="text/markdown",
-                width="stretch",
+                use_container_width=True,
             )
             st.markdown(report_text)
         else:
@@ -358,7 +358,7 @@ def _render_assets(bundle: dict[str, Any], output_dir: Path) -> None:
             data=zip_directory_bytes(output_dir),
             file_name=f"{output_dir.name}.zip",
             mime="application/zip",
-            width="stretch",
+            use_container_width=True,
         )
 
     file_paths = generated_file_paths(bundle)
@@ -403,7 +403,7 @@ def _render_ai_doctor(analysis: dict[str, Any]) -> None:
     st.markdown(deterministic_summary(analysis))
 
     summary_key = f"qwen_summary::{analysis.get('source', '')}"
-    if st.button("Generate Qwen Maintainer Summary", disabled=not configured, width="stretch"):
+    if st.button("Generate Qwen Maintainer Summary", disabled=not configured, use_container_width=True):
         try:
             with st.spinner("Asking Qwen to summarize the ROCm remediation plan..."):
                 response = generate_qwen_summary(analysis, api_key=api_key, model=model)
@@ -426,7 +426,7 @@ def _render_ai_doctor(analysis: dict[str, Any]) -> None:
         label_visibility="collapsed",
     )
     ask_key = f"qwen_answer::{analysis.get('source', '')}"
-    if st.button("Ask Qwen", disabled=not configured or not question.strip(), width="stretch"):
+    if st.button("Ask Qwen", disabled=not configured or not question.strip(), use_container_width=True):
         try:
             with st.spinner("Asking Qwen about this analysis..."):
                 response = answer_qwen_question(analysis, question, api_key=api_key, model=model)
