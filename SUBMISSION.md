@@ -75,8 +75,8 @@ Most ROCm/CUDA hackathon ideas focus on code migration. ROCm CI Doctor focuses o
 
 ## Demo Links
 
-- GitHub repository: `[add link]`
-- Public demo: `[add link]`
+- GitHub repository: `https://github.com/ryder1018/rocm-ci-doctor`
+- Public demo: `https://huggingface.co/spaces/lablab-ai-amd-developer-hackathon/rocm-ci-doctor`
 - Demo video: `[add link]`
 - Build in Public post 1: `[add link]`
 - Build in Public post 2: `[add link]`

@@ -635,7 +635,7 @@ Goal:
 
 Status:
 
-- In progress. Local packaging files, README positioning, demo script, deployment guide, submission draft, secret hygiene checks, generated bundle verification, Streamlit startup check, and Qwen live check are complete. External publishing, public demo deployment, video recording, and final lablab submission still require user-operated accounts.
+- In progress. Local packaging, README positioning, demo script, deployment guide, submission draft, secret hygiene checks, generated bundle verification, GitHub publishing, Hugging Face Space deployment, Streamlit compatibility fixes, and Qwen live checks are complete. Remaining work is video recording, final public browser verification, optional Space secrets, and final lablab submission.
 
 Tasks:
 
@@ -646,7 +646,7 @@ Tasks:
 - [x] Clean generated noise before publishing:
   - Keep curated example outputs only if they help the demo.
   - Do not publish local caches, temporary bundles, or credential files.
-- [ ] Publish the GitHub repository with:
+- [x] Publish the GitHub repository with:
   - `README.md`
   - `PLAN.md`
   - `PHASE5_AMD_CLOUD_RUNBOOK.md`
@@ -666,16 +666,16 @@ Tasks:
   5. Open `AI Doctor` and click `Generate Qwen Maintainer Summary`.
   6. Ask Qwen what to fix first.
   7. Show AMD Cloud evidence.
-- [ ] Deploy a public demo:
+- [x] Deploy a public demo:
   - Preferred: Hugging Face Space with Streamlit.
   - Fallback: another public Streamlit host or a recorded local demo if deployment blocks submission.
 - [x] Add public demo deployment preparation files:
   - `requirements.txt`
   - `DEPLOYMENT.md`
 - [ ] If using Hugging Face Space:
-  - Join the event Hugging Face organization.
-  - Add required environment secret `DASHSCOPE_API_KEY` only through Space secrets, never in code.
-  - Confirm the Space can run without the secret using deterministic mode.
+  - [x] Join the event Hugging Face organization.
+  - [ ] Add required environment secret `DASHSCOPE_API_KEY` only through Space secrets, never in code.
+  - [ ] Confirm the Space can run without the secret using deterministic mode.
 - [x] Prepare `DEMO_SCRIPT.md` for a 2-3 minute demo video:
   - 0:00-0:20 problem statement: AI repos regress to CUDA-only without CI.
   - 0:20-0:55 analyze sample repo and show readiness score.
@@ -701,9 +701,9 @@ Tasks:
 Exit criteria:
 
 - [ ] Submission includes working demo link, repo link, video, and clear Track 1 explanation.
-- [ ] A judge can understand the value in under 3 minutes.
+- [ ] A judge can understand the value in under 3 minutes after the video is recorded.
 - [ ] The project still works if Qwen API access is unavailable.
-- [ ] The project includes real AMD/ROCm validation evidence.
+- [x] The project includes real AMD/ROCm validation evidence.
 
 Verification:
 
