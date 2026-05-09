@@ -170,8 +170,6 @@ Current captured evidence:
 - `evidence/amd-cloud/benchmark.json`
 - `evidence/amd-cloud/rocm-smi.txt`
 
-For the exact manual workflow, see `PHASE5_AMD_CLOUD_RUNBOOK.md`.
-
 ## AMD Developer Cloud Proof
 
 The generated validation bundle was executed on AMD Developer Cloud in a PyTorch ROCm container. Captured proof is stored in `evidence/amd-cloud/`.
@@ -232,8 +230,6 @@ Minimum files for a Space:
 - `evidence/amd-cloud/PHASE5_PROOF.md`
 
 Set `DASHSCOPE_API_KEY` as a private Space secret if live Qwen responses are desired. The app still works without the secret by showing deterministic agent cards and deterministic summaries.
-
-For deployment steps, see `DEPLOYMENT.md`.
 
 ## Verification
 

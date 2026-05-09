@@ -19,3 +19,11 @@ outputs/
 .env
 .env.*
 !.env.example
+
+# Internal working documents — kept locally for hackathon delivery, not part of the public repo.
+DEMO_SCRIPT.md
+DEPLOYMENT.md
+PHASE5_AMD_CLOUD_RUNBOOK.md
+PITCH_DECK.md
+PLAN.md
+SUBMISSION.md
