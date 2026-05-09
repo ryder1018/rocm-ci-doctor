@@ -35,8 +35,8 @@ from rocm_ci_doctor.ui_helpers import (
 )
 
 
-LOGO_PATH = Path("ROCm_CI_Doctor.png")
-SIDEBAR_LOGO_PATH = Path("docter_1.png")
+LOGO_PATH = Path("assets/logo-small.png")
+SIDEBAR_LOGO_PATH = Path("assets/docter_1-small.png")
 
 
 st.set_page_config(
