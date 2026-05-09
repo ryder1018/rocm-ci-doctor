@@ -635,7 +635,7 @@ Goal:
 
 Status:
 
-- In progress. Local packaging, README positioning, demo script, deployment guide, submission draft, secret hygiene checks, generated bundle verification, GitHub publishing, Hugging Face Space deployment, Streamlit compatibility fixes, and Qwen live checks are complete. Remaining work is video recording, final public browser verification, optional Space secrets, and final lablab submission.
+- In progress. Local packaging, README positioning, demo script, deployment guide, submission draft, secret hygiene checks, generated bundle verification, GitHub publishing, Hugging Face Space deployment, Streamlit compatibility fixes, Qwen live checks, and Space `DASHSCOPE_API_KEY` secret configuration are complete. Remaining work is video recording, final public browser verification, and final lablab submission.
 
 Tasks:
 
@@ -674,7 +674,7 @@ Tasks:
   - `DEPLOYMENT.md`
 - [ ] If using Hugging Face Space:
   - [x] Join the event Hugging Face organization.
-  - [ ] Add required environment secret `DASHSCOPE_API_KEY` only through Space secrets, never in code.
+  - [x] Add required environment secret `DASHSCOPE_API_KEY` only through Space secrets, never in code.
   - [ ] Confirm the Space can run without the secret using deterministic mode.
 - [x] Prepare `DEMO_SCRIPT.md` for a 2-3 minute demo video:
   - 0:00-0:20 problem statement: AI repos regress to CUDA-only without CI.

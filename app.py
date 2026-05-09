@@ -504,10 +504,6 @@ def _render_header() -> None:
             <span><em>03</em>Generate</span>
             <span><em>04</em>Explain</span>
           </div>
-          <div class="masthead-issue">
-            <span class="kicker">Vol. I</span>
-            <span class="folio">/ Issue 01 — Phase 6 · Qwen Online</span>
-          </div>
         </div>
 
         <header class="hero">
@@ -550,7 +546,6 @@ def _render_header() -> None:
                 <span class="reg-mark reg-br"></span>
                 {logo_html}
               </div>
-              <div class="hero-mark-caption">Fig. 1 · Instrument mark</div>
             </div>
           </div>
         </header>
@@ -849,7 +844,7 @@ def _inject_css() -> None:
         /* === Masthead === */
         .masthead {
           display: grid;
-          grid-template-columns: minmax(0, 1.3fr) auto auto;
+          grid-template-columns: minmax(0, 1.3fr) auto;
           align-items: center;
           gap: 1.6rem;
           padding: 1.1rem 0 0.85rem;
@@ -915,27 +910,6 @@ def _inject_css() -> None:
           font-weight: 700;
           margin-right: 0.4rem;
         }
-        .masthead-issue {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          gap: 0.18rem;
-          font-family: "JetBrains Mono", monospace;
-          font-size: 0.7rem;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          color: var(--steam);
-        }
-        .masthead-issue .kicker {
-          font-family: "Fraunces", serif;
-          font-style: italic;
-          font-size: 1.05rem;
-          letter-spacing: 0;
-          text-transform: none;
-          color: var(--ink);
-          font-weight: 500;
-        }
-
         /* === Hero === */
         .hero {
           padding: 2.4rem 0 2.6rem;
@@ -1111,13 +1085,6 @@ def _inject_css() -> None:
         .reg-tr { top: -7px; right: -7px; }
         .reg-bl { bottom: -7px; left: -7px; }
         .reg-br { bottom: -7px; right: -7px; }
-
-        .hero-mark-caption {
-          font-family: "Fraunces", serif;
-          font-style: italic;
-          font-size: 0.85rem;
-          color: var(--steam);
-        }
 
         /* === Chart (welcome) === */
         .chart {
@@ -1969,7 +1936,6 @@ def _inject_css() -> None:
             grid-template-columns: 1fr;
             gap: 0.85rem;
           }
-          .masthead-issue { align-items: flex-start; }
           .hero-grid,
           .chart-grid,
           .result-hero { grid-template-columns: 1fr; }
