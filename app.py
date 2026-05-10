@@ -395,7 +395,7 @@ def _render_ai_doctor(analysis: dict[str, Any]) -> None:
             <div class="qwen-status-label">{html.escape(status)}</div>
             <div class="qwen-status-copy">{note}</div>
           </div>
-          <div class="qwen-badge">Qwen Phase 6</div>
+          <div class="qwen-badge">qwen-plus</div>
         </section>
         """
     )

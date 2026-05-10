@@ -1,4 +1,4 @@
-# Phase 5 AMD Developer Cloud Proof
+# AMD Developer Cloud Proof
 
 ROCm CI Doctor successfully ran its generated validation bundle on AMD Developer Cloud.
 

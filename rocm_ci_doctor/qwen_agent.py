@@ -1,4 +1,4 @@
-"""Optional Qwen-powered explanation layer for Phase 6."""
+"""Optional Qwen-powered explanation layer."""
 
 from __future__ import annotations
 

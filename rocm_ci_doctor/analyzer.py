@@ -1,4 +1,4 @@
-"""Static repository analyzer for Phase 1."""
+"""Static repository analyzer for ROCm CI Doctor."""
 
 from __future__ import annotations
 

@@ -15,9 +15,9 @@ ROCm CI Doctor is an agentic developer workflow for keeping AI repositories AMD/
 
 Instead of doing one-time CUDA-to-ROCm migration, ROCm CI Doctor focuses on the workflow maintainers need after every pull request: continuous validation through CI, smoke tests, benchmark scripts, and evidence captured on AMD Developer Cloud.
 
-## Current Phase
+## Status
 
-Phase 1 through Phase 6 are implemented. Phase 7 packaging is in progress. Phase 5 hardware validation was run on AMD Developer Cloud using the generated validation bundle. Phase 6 adds an optional Qwen-powered explanation layer while keeping deterministic analysis as the source of truth.
+The deterministic analyzer, ROCm CI bundle generator, AMD Developer Cloud validation runner, and the optional Qwen-powered AI Doctor are all implemented. Hardware validation has been executed on AMD Developer Cloud using the generated bundle, and the captured evidence is committed in this repository. Qwen runs as an explanation and prioritization layer on top of the deterministic analysis; it is never the source of truth.
 
 - Accept a local repository path or public GitHub URL.
 - Clone public GitHub repositories into a temporary directory.
@@ -143,9 +143,9 @@ python -m rocm_ci_doctor analyze samples/cuda_heavy_repo \
 
 The generated bundle is written outside the analyzed repository by default, so you can review the files before copying them into a branch or pull request.
 
-## Phase 5 AMD Developer Cloud Validation
+## AMD Developer Cloud Validation
 
-ROCm CI Doctor now generates a Phase 5 validation runner inside each bundle. After creating a bundle, copy it into the target repository root on an AMD Developer Cloud instance and run:
+ROCm CI Doctor generates an AMD Cloud validation runner inside each bundle. After creating a bundle, copy it into the target repository root on an AMD Developer Cloud instance and run:
 
 ```bash
 chmod +x scripts/run_rocm_validation.sh
@@ -159,7 +159,7 @@ The script captures:
 - Benchmark output in `evidence/amd-cloud/benchmark.json`
 - A demo-friendly summary in `evidence/amd-cloud/SUMMARY.md`
 
-Real Phase 5 proof must include a non-empty `torch.version.hip`, visible ROCm GPU access, and successful `status: "ok"` results for both smoke test and benchmark. CPU dry-runs are useful for debugging but do not count as AMD/ROCm hardware proof.
+Real hardware proof must include a non-empty `torch.version.hip`, visible ROCm GPU access, and successful `status: "ok"` results for both smoke test and benchmark. CPU dry-runs are useful for debugging but do not count as AMD/ROCm hardware proof.
 
 Current captured evidence:
 
@@ -185,7 +185,7 @@ Summary:
 
 See `evidence/amd-cloud/PHASE5_PROOF.md` for the full evidence summary.
 
-## Phase 6 Qwen Agent Layer
+## Qwen AI Doctor
 
 The local UI includes an `AI Doctor` tab with four deterministic agents:
 

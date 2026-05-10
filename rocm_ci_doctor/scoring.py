@@ -1,4 +1,4 @@
-"""Readiness scoring and risk enrichment for Phase 2."""
+"""Readiness scoring and risk enrichment."""
 
 from __future__ import annotations
 

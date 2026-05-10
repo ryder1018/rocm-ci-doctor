@@ -112,7 +112,7 @@ def generate_markdown_report(analysis: dict[str, Any]) -> str:
             "3. Save the smoke test output and benchmark output as CI artifacts.",
             "4. Treat the generated score as a static signal and the AMD runtime logs as the actual compatibility proof.",
             "",
-            "Suggested validation commands after Phase 3 asset generation:",
+            "Suggested validation commands after generating the bundle:",
             "",
             "```bash",
             "python tests/test_rocm_smoke.py",
