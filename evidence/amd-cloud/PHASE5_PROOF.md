@@ -1,10 +1,10 @@
 # AMD Developer Cloud Proof
 
-ROCm CI Doctor successfully ran its generated validation bundle on AMD Developer Cloud.
+ROCm CI Doctor successfully ran its generated validation bundle on AMD Developer Cloud. The bundled sample (`cuda_heavy_repo`) was used as the validation target to prove the runner works end-to-end on real ROCm hardware. The same bundle generator is invoked for every analyzed repository — including any GitHub URL pasted into the live UI.
 
 ## Run Summary
 
-- Repository analyzed: `cuda_heavy_repo`
+- Validation target: `cuda_heavy_repo` (bundled sample · used to verify the runner on real ROCm hardware)
 - Evidence captured at: `2026-05-08T08:30:12Z`
 - Runtime location: DigitalOcean / AMD Developer Cloud PyTorch ROCm container
 - Kernel: `Linux 6.8.0-84-generic x86_64 GNU/Linux`
