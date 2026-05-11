@@ -11,96 +11,78 @@ license: mit
 
 # ROCm CI Doctor
 
-ROCm CI Doctor is an agentic developer workflow for keeping AI repositories AMD/ROCm-ready. It analyzes a Python/PyTorch repository, scores ROCm CI readiness, generates a reviewable validation bundle, and uses Qwen to help maintainers understand what to fix first.
+A continuous AMD/ROCm readiness gate for Python/PyTorch repositories. Point it at a repo, get a readiness score, generated CI assets ready to drop into a pull request, and an explanation layer that prioritizes what to fix first.
 
-Instead of doing one-time CUDA-to-ROCm migration, ROCm CI Doctor focuses on the workflow maintainers need after every pull request: continuous validation through CI, smoke tests, benchmark scripts, and evidence captured on AMD Developer Cloud.
+**Live demo:** https://huggingface.co/spaces/lablab-ai-amd-developer-hackathon/rocm-ci-doctor
 
-## Status
+## What it does
 
-The deterministic analyzer, ROCm CI bundle generator, AMD Developer Cloud validation runner, and the optional Qwen-powered AI Doctor are all implemented. Hardware validation has been executed on AMD Developer Cloud using the generated bundle, and the captured evidence is committed in this repository. Qwen runs as an explanation and prioritization layer on top of the deterministic analysis; it is never the source of truth.
+Most AI repositories are written and tested against NVIDIA CUDA. Even after a successful one-time port to AMD ROCm, future pull requests can hardcode CUDA assumptions and silently break AMD compatibility. ROCm CI Doctor closes that loop.
 
-- Accept a local repository path or public GitHub URL.
-- Clone public GitHub repositories into a temporary directory.
-- Scan relevant source, dependency, Docker, and GitHub Actions files.
-- Detect Python, PyTorch, Transformers, vLLM, SGLang, Docker, and CI usage.
-- Detect common CUDA/NVIDIA-specific patterns.
-- Return structured JSON with stack detection, risks, CI gaps, and recommended assets.
-- Calculate a transparent 0-100 AMD readiness score.
-- Categorize risks by severity and recommended fix category.
-- Generate `ROCM_CI_REPORT.md` from structured analyzer output.
-- Generate a complete ROCm CI asset bundle:
-  - `.github/workflows/rocm-ci.yml`
-  - `Dockerfile.rocm`
-  - `tests/test_rocm_smoke.py`
-  - `benchmarks/benchmark_rocm.py`
-  - `ROCM_CI_REPORT.md`
-  - `ASSET_MANIFEST.json`
-- Run a local Streamlit UI for repository analysis, risk review, generated asset previews, and bundle export.
-- Generate AMD Developer Cloud validation handoff assets:
-  - `AMD_CLOUD_VALIDATION.md`
-  - `scripts/run_rocm_validation.sh`
-  - `evidence/README.md`
-- Capture AMD Developer Cloud proof in `evidence/amd-cloud/`.
-- Provide an agentic explanation workflow with optional Qwen summaries and an Ask the Doctor panel.
+Given a local path or a public GitHub URL, the tool:
 
-## Why Track 1: AI Agents & Agentic Workflows
+- Scans source files, dependencies, Dockerfiles, and existing GitHub Actions.
+- Detects CUDA/NVIDIA-specific patterns (`.cuda()` calls, hardcoded `cuda` device strings, CUDA-only packages, `nvidia-smi`, `nvcc`, CUDA base images, TensorRT references, etc.).
+- Calculates a transparent 0–100 readiness score with an explainable breakdown.
+- Generates a complete ROCm CI bundle ready for review in a pull request.
+- Provides an optional AI Doctor layer (powered by Qwen) that turns the structured findings into a maintainer-facing summary and answers free-form questions.
 
-ROCm CI Doctor fits the AMD Developer Hackathon's AI Agents & Agentic Workflows track because it coordinates multiple bounded agents around a real developer workflow:
+The deterministic analyzer is always the source of truth. The Qwen layer is opt-in and never overrides the score or risk list.
 
-1. **Repo Inspector Agent** scans source files, dependencies, Dockerfiles, and workflows for CUDA/ROCm signals.
-2. **CI Architect Agent** decides which ROCm CI assets should be generated.
-3. **Validation Agent** creates the smoke test, benchmark script, and AMD Developer Cloud evidence runner.
-4. **Report Agent** writes the readiness report, score breakdown, and next-step plan.
-5. **Qwen AI Doctor** summarizes findings and answers maintainer questions using the deterministic analysis context.
+## Try it without installing
 
-The deterministic analyzer is the source of truth. Qwen is used for explanation, prioritization, and interactive maintainer guidance, not for unchecked code generation.
+Open the live Hugging Face Space and paste any public GitHub URL into the sidebar:
 
-## Business Value
+```
+https://huggingface.co/spaces/lablab-ai-amd-developer-hackathon/rocm-ci-doctor
+```
 
-Many AI repositories are developed against CUDA-first environments. Even when their code can run on AMD GPUs, maintainers often lack a repeatable way to prove ROCm compatibility after future changes.
+Or run any of the bundled sample repositories:
 
-ROCm CI Doctor turns ROCm support into a reviewable pull-request gate:
+- `samples/cuda_heavy_repo` (intentionally CUDA-heavy, low score)
+- `samples/simple_pytorch_repo` (a small portable PyTorch repo)
+- `samples/plain_python_repo` (no GPU code, high score)
 
-- Identify CUDA-specific assumptions before they break an AMD deployment.
-- Generate the CI, Docker, smoke test, benchmark, and report files maintainers need.
-- Capture AMD Developer Cloud evidence once and reuse it in demos, reviews, and project documentation.
-- Keep ROCm compatibility from regressing after migration work is complete.
-
-## Demo Script
-
-Recommended 2-3 minute demo flow:
-
-1. Start the Streamlit app and select `samples/cuda_heavy_repo`.
-2. Run analysis and show the readiness score plus top risks.
-3. Open Generated Assets and preview `.github/workflows/rocm-ci.yml`, `Dockerfile.rocm`, `tests/test_rocm_smoke.py`, and `benchmarks/benchmark_rocm.py`.
-4. Open AI Doctor and show the deterministic agent cards.
-5. Click `Generate Qwen Maintainer Summary` and ask: "What should I fix first for ROCm CI readiness?"
-6. Show AMD Developer Cloud proof in `evidence/amd-cloud/PHASE5_PROOF.md`.
-7. Close with the message: ROCm CI Doctor is not a migration script; it is a continuous AMD readiness gate.
-
-## Conda Setup
+## Local install
 
 ```bash
 conda env create -f environment.yml
 conda activate rocm-ci-doctor
 ```
 
-If the environment already exists:
+If the environment already exists, update it:
 
 ```bash
 conda env update -f environment.yml --prune
 conda activate rocm-ci-doctor
 ```
 
-## Usage
-
-Run the local UI:
+## Using the Streamlit UI
 
 ```bash
 streamlit run app.py
 ```
 
-Analyze a local sample repository:
+The sidebar accepts three source modes:
+
+| Mode | When to use |
+|------|-------------|
+| `Sample repository` | Pick a bundled fixture for quick experimentation. |
+| `Local path` | Analyze a working copy on your own machine. |
+| `GitHub URL` | Clone a public repo into a temporary directory and analyze it. |
+
+After you click `Run Analysis`, six tabs appear:
+
+- **Overview** — detected stack, score breakdown, and CI gaps.
+- **Risks** — every finding grouped by severity, with line numbers.
+- **Generated Assets** — preview every file in the generated ROCm CI bundle and download the whole bundle as a zip.
+- **AI Doctor** — four deterministic agent cards summarizing the run. If `DASHSCOPE_API_KEY` is set, a Qwen-powered Maintainer Summary and an Ask the Doctor Q&A panel become available.
+- **Report** — the rendered `ROCM_CI_REPORT.md` with the score, risks, remediation plan, and validation commands.
+- **JSON** — raw analyzer output for downstream tooling.
+
+## Using the CLI
+
+Analyze a local path:
 
 ```bash
 python -m rocm_ci_doctor analyze samples/cuda_heavy_repo
@@ -112,27 +94,19 @@ Analyze a public GitHub repository:
 python -m rocm_ci_doctor analyze https://github.com/pytorch/examples
 ```
 
-Write JSON output to a file:
+Write structured JSON to disk:
 
 ```bash
 python -m rocm_ci_doctor analyze samples/simple_pytorch_repo --json-out outputs/simple.json
 ```
 
-Generate a markdown report:
+Render a Markdown report:
 
 ```bash
 python -m rocm_ci_doctor analyze samples/cuda_heavy_repo --report-out outputs/ROCM_CI_REPORT.md
 ```
 
-Generate both JSON and markdown:
-
-```bash
-python -m rocm_ci_doctor analyze samples/cuda_heavy_repo \
-  --json-out outputs/cuda-heavy.json \
-  --report-out outputs/ROCM_CI_REPORT.md
-```
-
-Generate a complete ROCm CI asset bundle:
+Generate a full ROCm CI asset bundle in one command:
 
 ```bash
 python -m rocm_ci_doctor analyze samples/cuda_heavy_repo \
@@ -141,100 +115,110 @@ python -m rocm_ci_doctor analyze samples/cuda_heavy_repo \
   --generate-out outputs/cuda-heavy-bundle
 ```
 
-The generated bundle is written outside the analyzed repository by default, so you can review the files before copying them into a branch or pull request.
+The generated bundle is written outside the analyzed repository by default, so you can review the files before copying them into a feature branch.
 
-## AMD Developer Cloud Validation
+Pass `--compact` to emit single-line JSON suitable for piping into other tools.
 
-ROCm CI Doctor generates an AMD Cloud validation runner inside each bundle. After creating a bundle, copy it into the target repository root on an AMD Developer Cloud instance and run:
+## What the bundle contains
+
+Each generated bundle is a self-contained set of files designed to be diffed in a pull request:
+
+```
+outputs/<bundle-name>/
+├── .github/workflows/rocm-ci.yml      GitHub Actions workflow for a self-hosted AMD GPU runner
+├── Dockerfile.rocm                    ROCm-compatible container starter (PyTorch ROCm base image)
+├── tests/test_rocm_smoke.py           Smoke test: import torch, detect AMD GPU, run a tensor op
+├── benchmarks/benchmark_rocm.py       Small matrix multiply benchmark with timing
+├── scripts/run_rocm_validation.sh     One-command runner for AMD Developer Cloud
+├── ROCM_CI_REPORT.md                  Readiness report (score, risks, remediation plan)
+├── AMD_CLOUD_VALIDATION.md            How to capture hardware evidence on AMD Developer Cloud
+├── evidence/README.md                 Reserved directory for runner output
+└── ASSET_MANIFEST.json                Machine-readable manifest of every generated file
+```
+
+Every asset is deterministic. The same input repository always produces the same bundle.
+
+## Running validation on AMD hardware
+
+After generating a bundle, copy it into the target repository root on an AMD Developer Cloud instance (or any host with a ROCm-capable AMD GPU and PyTorch ROCm installed) and run:
 
 ```bash
 chmod +x scripts/run_rocm_validation.sh
 ./scripts/run_rocm_validation.sh evidence/amd-cloud
 ```
 
-The script captures:
+The runner produces:
 
-- ROCm/PyTorch environment metadata in `evidence/amd-cloud/environment.json`
-- Smoke test output in `evidence/amd-cloud/smoke.json`
-- Benchmark output in `evidence/amd-cloud/benchmark.json`
-- A demo-friendly summary in `evidence/amd-cloud/SUMMARY.md`
+- `evidence/amd-cloud/environment.json` — ROCm/PyTorch environment metadata
+- `evidence/amd-cloud/smoke.json` — smoke test result with elapsed time
+- `evidence/amd-cloud/benchmark.json` — benchmark result with mean and median time
+- `evidence/amd-cloud/SUMMARY.md` — readable summary suitable for sharing or attaching to a PR
 
-Real hardware proof must include a non-empty `torch.version.hip`, visible ROCm GPU access, and successful `status: "ok"` results for both smoke test and benchmark. CPU dry-runs are useful for debugging but do not count as AMD/ROCm hardware proof.
+A successful run must include a non-empty `torch.version.hip`, `torch.cuda.is_available() == true`, and `status: "ok"` for both the smoke test and the benchmark. CPU-only dry runs are useful for debugging but do not count as hardware proof.
 
-Current captured evidence:
+## Reference AMD Developer Cloud run
 
-- `evidence/amd-cloud/PHASE5_PROOF.md`
-- `evidence/amd-cloud/SUMMARY.md`
-- `evidence/amd-cloud/environment.json`
-- `evidence/amd-cloud/smoke.json`
-- `evidence/amd-cloud/benchmark.json`
-- `evidence/amd-cloud/rocm-smi.txt`
+A reference run is committed in `evidence/amd-cloud/`. It used the bundled sample (`cuda_heavy_repo`) to validate the generated runner end-to-end on real ROCm hardware. Summary:
 
-## AMD Developer Cloud Proof
+| Field | Value |
+|-------|-------|
+| ROCm/HIP | `7.0.51831-a3e329ad8` |
+| PyTorch | `2.9.0.dev20250821+rocm7.0.0.git125803b7` |
+| `torch.cuda.is_available()` | `true` |
+| GPU count | `1` |
+| Smoke test | `ok` (`502.992 ms`) |
+| Benchmark | `ok` (2048×2048 matmul, `0.196 ms` mean) |
 
-The generated validation bundle was executed on AMD Developer Cloud in a PyTorch ROCm container. Captured proof is stored in `evidence/amd-cloud/`.
+The full proof, including `smoke.json`, `benchmark.json`, `environment.json`, and `rocm-smi.txt`, is in `evidence/amd-cloud/`.
 
-Summary:
+## Enabling the Qwen AI Doctor
 
-- ROCm/HIP: `7.0.51831-a3e329ad8`
-- PyTorch: `2.9.0.dev20250821+rocm7.0.0.git125803b7`
-- GPU visible through PyTorch: `torch.cuda.is_available() == true`
-- GPU count: `1`
-- Smoke test: `ok`
-- Benchmark: `ok`
+The AI Doctor is optional. The analyzer, scoring, and bundle generation all work without it.
 
-See `evidence/amd-cloud/PHASE5_PROOF.md` for the full evidence summary.
-
-## Qwen AI Doctor
-
-The local UI includes an `AI Doctor` tab with four deterministic agents:
-
-- Repo Inspector Agent
-- CI Architect Agent
-- Validation Agent
-- Report Agent
-
-If Qwen is configured, the same tab can generate a maintainer-facing remediation summary and answer questions about the report.
-
-Set the Qwen API key in your shell:
+Set your DashScope API key in the shell:
 
 ```bash
 export DASHSCOPE_API_KEY="sk-..."
 ```
 
-Or create a local `.env` file. `.env` is ignored by git:
+Or create a local `.env` file (already gitignored):
 
 ```bash
-printf 'DASHSCOPE_API_KEY=sk-your-qwen-api-key\nQWEN_MODEL=qwen-plus\n' > .env
+printf 'DASHSCOPE_API_KEY=sk-your-key\nQWEN_MODEL=qwen-plus\n' > .env
 ```
 
-You can also enter the key into the Streamlit sidebar for the current local session. The default model is `qwen-plus`; override it with:
+You can also paste the key directly into the Streamlit sidebar for a single session. The default model is `qwen-plus`; override it with the `QWEN_MODEL` environment variable.
 
-```bash
-export QWEN_MODEL="qwen-plus"
+If the AI Doctor is enabled, the tab gains two surfaces:
+
+- **Generate Qwen Maintainer Summary** — a prose summary of the readiness report, prioritized for the maintainer.
+- **Ask the Doctor** — free-form Q&A grounded on the deterministic findings (defaults to *"What should I fix first before adding the generated ROCm CI workflow?"*).
+
+The Qwen layer is strictly an explanation and prioritization layer. The deterministic score, risk list, and generated bundle are produced before Qwen runs.
+
+## Repository layout
+
 ```
-
-The Qwen layer only rewrites, summarizes, and answers from the deterministic analysis context. It does not replace the static analyzer or readiness score.
-
-## Public Demo Deployment
-
-The app can be deployed as a Streamlit app on Hugging Face Spaces or another Streamlit-compatible host.
-
-Minimum files for a Space:
-
-- `app.py`
-- `requirements.txt`
-- `rocm_ci_doctor/`
-- `samples/`
-- `assets/`
-- `evidence/amd-cloud/PHASE5_PROOF.md`
-
-Set `DASHSCOPE_API_KEY` as a private Space secret if live Qwen responses are desired. The app still works without the secret by showing deterministic agent cards and deterministic summaries.
+rocm_ci_doctor/        Analyzer, scoring, generator, Qwen agent, CLI
+app.py                 Streamlit UI
+samples/               Bundled sample repositories for testing
+evidence/amd-cloud/    Reference AMD Developer Cloud run output
+tests/                 Unit tests (23 tests)
+environment.yml        Conda environment definition
+requirements.txt       Pip-installable dependencies (for HF Spaces)
+.env.example           Template for local Qwen configuration
+```
 
 ## Verification
 
 ```bash
 python -m pytest -q
-python -m rocm_ci_doctor analyze samples/cuda_heavy_repo --generate-out outputs/submission-check-bundle --compact
-bash -n outputs/submission-check-bundle/scripts/run_rocm_validation.sh
+python -m rocm_ci_doctor analyze samples/cuda_heavy_repo --generate-out outputs/check-bundle --compact
+bash -n outputs/check-bundle/scripts/run_rocm_validation.sh
 ```
+
+All 23 unit tests should pass and the generated runner script should pass `bash -n` syntax validation.
+
+## License
+
+MIT.
